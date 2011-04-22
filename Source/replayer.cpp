@@ -1,4 +1,5 @@
 #include "replayer.h"
+#include <BWAPI.h>
 
 Replayer::Replayer()
 {
@@ -72,4 +73,6 @@ void Replayer::onFrame()
 	// Get the normalized distribution representing P(C B | [E=true]^[D=false] )
 	plDistribution  T_P_CB;
 	P_CB.compile(T_P_CB);
+
+	BWAPI::Broodwar->printf(P_CB.to_string().c_str());
 }
