@@ -1,12 +1,12 @@
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 
+#include "parameters.h"
 #include <windows.h>
 #include <stdio.h>
 #include <tchar.h>
-
 #include <BWAPI.h>
-
 #include "ExampleAIModule.h"
+
 namespace BWAPI { Game* Broodwar; }
 BOOL APIENTRY DllMain( HANDLE hModule, 
                        DWORD  ul_reason_for_call, 

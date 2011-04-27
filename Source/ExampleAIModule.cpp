@@ -1,18 +1,85 @@
 #include "ExampleAIModule.h"
-#include "replayer.h"
+#include "model.h"
+#include <string>
 using namespace BWAPI;
 
 bool analyzed;
 bool analysis_just_finished;
 BWTA::Region* home;
 BWTA::Region* enemy_base;
-Replayer* replayer;
+OpeningPredictor* openingPredictor;
+
+void removeVisionExceptForPlayer(Player* p)
+{
+	std::vector<int> playersToExclude;
+	int i = 0;
+	int obsCount = 0;
+	for(std::set<Player*>::iterator it = Broodwar->getPlayers().begin();
+		it != Broodwar->getPlayers().end(); ++it)
+	{
+		if ((*it)->getUnits().empty() && !(*it)->isNeutral())
+			++obsCount;
+		if (*it != p)
+		{
+			playersToExclude.push_back(i);
+			Broodwar->printf("removing player %d", i);
+		}
+		++i;
+	}
+	// Launch an AutoHotkey that will remove all players from playersToExclude
+	wchar_t procNameW[400] = L"C:\\StarCraft\\AI\\BroodwarBotQ\\scripts\\removeViewPlayers.exe";
+	for (std::vector<int>::const_iterator it = playersToExclude.begin();
+		it != playersToExclude.end(); ++it)
+	{
+		wsprintf(procNameW, L"%s %d", procNameW, *it);
+	}
+	// Initialize StartupInfo structure
+	STARTUPINFO    StartupInfo;
+	memset(&StartupInfo, 0, sizeof(StartupInfo));
+	StartupInfo.cb = sizeof(StartupInfo);
+	// This will contain the information about the newly created process
+	PROCESS_INFORMATION ProcessInformation;
+	// Create/Launch Process
+	BOOL results = CreateProcess(0,
+		procNameW, // Process and arguments
+		0, // Process Attributes
+		0, // Thread Attributes
+		FALSE, // Inherit Handles
+		0, // CreationFlags,
+		0, // Environment
+		0, // Current Directory
+		&StartupInfo, // StartupInfo
+		&ProcessInformation // Process Information
+		);
+	// Cleanup
+	CloseHandle(ProcessInformation.hProcess);
+	CloseHandle(ProcessInformation.hThread);
+}
 
 void ExampleAIModule::onStart()
 {
-	replayer = new Replayer();
-	Broodwar->sendText("Hello world!");
-	Broodwar->printf("The map is %s, a %d player map",Broodwar->mapName().c_str(),Broodwar->getStartLocations().size());
+#ifdef MY_OPENING_LABELS
+	std::string learningFile = "C:\StarCraft\AI\Replayer\Data\XvXx.txt";
+#else
+	std::string learningFile = "C:\StarCraft\AI\Replayer\Data\XvX.txt";
+#endif
+	/// determine the matchup to select the learning file and the openings
+	std::set<Player*>::iterator weWatch = Broodwar->getPlayers().begin();
+	while ((*weWatch)->getUnits().empty() || (*weWatch)->isNeutral())
+		++weWatch;
+	learningFile[32] = (*weWatch)->getRace().getName()[0];
+	///removeVisionExceptForPlayer(*weWatch);
+	++weWatch;
+	while ((*weWatch)->getUnits().empty() || (*weWatch)->isNeutral())
+		++weWatch;
+	learningFile[30] = (*weWatch)->getRace().getName()[0];
+	Broodwar->printf("enemy race %c, our race %c", learningFile[30], learningFile[32]);
+	
+	// TODO
+	//openingPredictor = new OpeningPredictor(learningFile.c_str());
+	//Broodwar->sendText("ProBT loaded and ready to fire!");
+
+	//Broodwar->printf("The map is %s, a %d player map",Broodwar->mapName().c_str(),Broodwar->getStartLocations().size());
 	// Enable some cheat flags
 	Broodwar->enableFlag(Flag::UserInput);
 	// Uncomment to enable complete map information
@@ -28,12 +95,12 @@ void ExampleAIModule::onStart()
 
 	if (Broodwar->isReplay())
 	{
-		Broodwar->printf("The following players are in this replay:");
+		//Broodwar->printf("The following players are in this replay:");
 		for(std::set<Player*>::iterator p=Broodwar->getPlayers().begin();p!=Broodwar->getPlayers().end();p++)
 		{
 			if (!(*p)->getUnits().empty() && !(*p)->isNeutral())
 			{
-				Broodwar->printf("%s, playing as a %s",(*p)->getName().c_str(),(*p)->getRace().getName().c_str());
+				//Broodwar->printf("%s, playing as a %s",(*p)->getName().c_str(),(*p)->getRace().getName().c_str());
 			}
 		}
 	}
@@ -84,13 +151,11 @@ void ExampleAIModule::onEnd(bool isWinner)
 	{
 		//log win to file
 	}
-	delete replayer;
+	delete openingPredictor;
 }
 
 void ExampleAIModule::onFrame()
 {
-	replayer->onFrame();
-
 	if (show_visibility_data)
 		drawVisibilityData();
 

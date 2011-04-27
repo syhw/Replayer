@@ -41,13 +41,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../BWAPI_3.5.4/include;probt/include"
+				AdditionalIncludeDirectories="../BWAPI_3.5.4/include;probt/include;../boost_1_45_0"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;EXAMPLEAIMODULE_EXPORTS;PL_DLL;SL_DLL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
+				WarningLevel="0"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -118,7 +118,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="../BWAPI_3.5.4/include;probt/include"
+				AdditionalIncludeDirectories="../BWAPI_3.5.4/include;probt/include;C:\StarCraft\AI\boost_1_45_0"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;EXAMPLEAIMODULE_EXPORTS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -186,7 +186,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Source\replayer.cpp"
+				RelativePath=".\Source\model.cpp"
 				>
 			</File>
 		</Filter>
@@ -196,11 +196,27 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\Source\enums_name_tables.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Source\ExampleAIModule.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Source\replayer.h"
+				RelativePath=".\Source\model.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\parameters.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\replays.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\x_values.h"
 				>
 			</File>
 		</Filter>
