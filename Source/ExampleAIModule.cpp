@@ -58,26 +58,31 @@ void removeVisionExceptForPlayer(Player* p)
 
 void ExampleAIModule::onStart()
 {
-#ifdef MY_OPENING_LABELS
-	std::string learningFile = "C:\StarCraft\AI\Replayer\Data\XvXx.txt";
-#else
-	std::string learningFile = "C:\StarCraft\AI\Replayer\Data\XvX.txt";
-#endif
+	std::string learningFile = "C:\\StarCraft\\AI\\Replayer\\Data\\";
+	char us, them;
 	/// determine the matchup to select the learning file and the openings
 	std::set<Player*>::iterator weWatch = Broodwar->getPlayers().begin();
 	while ((*weWatch)->getUnits().empty() || (*weWatch)->isNeutral())
 		++weWatch;
-	learningFile[32] = (*weWatch)->getRace().getName()[0];
+	us = (*weWatch)->getRace().getName().c_str()[0];
 	///removeVisionExceptForPlayer(*weWatch);
 	++weWatch;
 	while ((*weWatch)->getUnits().empty() || (*weWatch)->isNeutral())
 		++weWatch;
-	learningFile[30] = (*weWatch)->getRace().getName()[0];
-	Broodwar->printf("enemy race %c, our race %c", learningFile[30], learningFile[32]);
+	them = (*weWatch)->getRace().getName().c_str()[0];
+	Broodwar->printf("enemy race %c, our race %c", us, them);
+	learningFile.push_back(them);
+	learningFile.push_back('v');
+	learningFile.push_back(us);
+#ifdef MY_OPENING_LABELS
+	learningFile.append("x.txt");
+#else
+	learningFile.append(".txt");
+#endif
 	
 	// TODO
-	//openingPredictor = new OpeningPredictor(learningFile.c_str());
-	//Broodwar->sendText("ProBT loaded and ready to fire!");
+	openingPredictor = new OpeningPredictor(learningFile.c_str());
+	Broodwar->sendText("ProBT loaded and ready to fire!");
 
 	//Broodwar->printf("The map is %s, a %d player map",Broodwar->mapName().c_str(),Broodwar->getStartLocations().size());
 	// Enable some cheat flags

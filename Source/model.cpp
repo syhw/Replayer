@@ -3,6 +3,8 @@
 #include "x_values.h"
 #include "replays.h"
 #include <BWAPI.h>
+#include <iostream>
+#include <fstream>
 
 /// Copyright Gabriel Synnaeve 2011
 /// This code is under 3-clauses (new) BSD License
@@ -328,11 +330,12 @@ OpeningPredictor::OpeningPredictor(const char* learningFileName)
 		BWAPI::Broodwar->printf("ERROR: enemy race unknown!");
 	ifstream extract_X_file(learningFileName); 
     vector_X = get_X_values(extract_X_file); /// Enemy race
+	extract_X_file.close();
 
     /**********************************************************************
       VARIABLES SPECIFICATION
      **********************************************************************/
-    X = plSymbol("X", plIntegerType(0, vector_X.size()));
+    X = plSymbol("X", plIntegerType(0, vector_X.size() - 1));
     lambda = plSymbol("lambda", PL_BINARY_TYPE);
     // what has been observed
     for (unsigned int i = 0; i < nbBuildings; i++)
