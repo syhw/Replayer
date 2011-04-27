@@ -82,6 +82,7 @@ void ExampleAIModule::onStart()
 	
 	// TODO
 	openingPredictor = new OpeningPredictor(learningFile.c_str());
+	openingPredictor->init_game();
 	Broodwar->sendText("ProBT loaded and ready to fire!");
 
 	//Broodwar->printf("The map is %s, a %d player map",Broodwar->mapName().c_str(),Broodwar->getStartLocations().size());
@@ -156,6 +157,7 @@ void ExampleAIModule::onEnd(bool isWinner)
 	{
 		//log win to file
 	}
+	openingPredictor->quit_game("duknow", 1);
 	delete openingPredictor;
 }
 
@@ -258,6 +260,11 @@ void ExampleAIModule::onNukeDetect(BWAPI::Position target)
 
 void ExampleAIModule::onUnitDiscover(BWAPI::Unit* unit)
 {
+	if (unit->getType().isBuilding())
+	{
+		openingPredictor->instantiate_and_compile(Broodwar->getFrameCount()/24, unit->getType().getName().c_str(), "duknow");
+	}
+
 	if (!Broodwar->isReplay() && Broodwar->getFrameCount()>1)
 		Broodwar->sendText("A %s [%x] has been discovered at (%d,%d)",unit->getType().getName().c_str(),unit,unit->getPosition().x(),unit->getPosition().y());
 }

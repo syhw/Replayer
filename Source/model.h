@@ -83,6 +83,8 @@ class OpeningPredictor
 		~OpeningPredictor();
         void init_game();
         int instantiate_and_compile(int time,
+                const char* building, const std::string& tmpOpening);
+        int instantiate_and_compile(int time,
                 const Building& building, const std::string& tmpOpening);
         int quit_game(const std::string& tmpOpening, int noreplay);
         void results(int noreplay);

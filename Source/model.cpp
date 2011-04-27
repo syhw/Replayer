@@ -420,7 +420,6 @@ OpeningPredictor::OpeningPredictor(const char* learningFileName)
                 P_X*P_Opening*listObs*P_lambda
 #endif
                 *timeLearner.get_computable_object()); // <=> P_Time);
-    jd.draw_graph("jd.fig");
 #if DEBUG_OUTPUT > 0
     cout << "Joint distribution built." << endl;
 #endif
@@ -521,6 +520,16 @@ void OpeningPredictor::init_game()
 }
 
 int OpeningPredictor::instantiate_and_compile(int time,
+        const char* building, const string& tmpOpening)
+{
+	Building b(building);
+	if (b.getEnumValue() == -1)
+		return 0;
+	else
+		return instantiate_and_compile(time, b, tmpOpening);
+}
+
+int OpeningPredictor::instantiate_and_compile(int time,
         const Building& building, const string& tmpOpening)
 {
     evidence[observed[building.getEnumValue()]] = 1;
@@ -540,9 +549,8 @@ int OpeningPredictor::instantiate_and_compile(int time,
 #endif
     PP_Opening.compile(T_P_Opening);
 #if DEBUG_OUTPUT >= 1
-    cout << "====== P(Opening | evidence), building: "
-        << building << " ======" << endl;
-    cout << T_P_Opening << endl;
+	BWAPI::Broodwar->printf("====== P(Opening | evidence), building: %s ======", building.toString().c_str());
+	BWAPI::Broodwar->printf("%s", T_P_Opening.to_string().c_str());
 #endif
 #ifdef BENCH
     if (T_P_Opening.is_null())

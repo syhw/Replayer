@@ -260,6 +260,9 @@ public:
     }
     Building(const char* buildingName)
     {
+		std::string tmpString(buildingName);
+		while (tmpString.find('_') != std::string::npos)
+			tmpString.replace(tmpString.find('_'), 1, 1, ' ');
         if (buildingName[0] == 'P')
         {
             _tableSize = NB_PROTOSS_BUILDINGS;
@@ -277,10 +280,12 @@ public:
         } 
         else
         {
+			_enumValue = -1;
             std::cout << 
                 "ERROR: Building constructor failed to determine the race -> "
                 << std::string(buildingName)
                 << std::endl;
+			return;
         }
         for (unsigned int i = 0; i < _tableSize; i++)
         {
@@ -289,14 +294,28 @@ public:
                 _enumValue = i;
                 return;
             }
+			if (!strcmp(tmpString.c_str(), _nameTable[i]))
+            {
+                _enumValue = i;
+                return;
+            }
         }
+		_enumValue = -1;
         std::cout << "ERROR: not found this building: "
             << "|" << std::string(buildingName) << "|"
             << std::endl;
+		return;
     }
+	std::string toString() const
+	{
+        if (_enumValue >= 0 && _enumValue < _tableSize)
+            return std::string(_nameTable[_enumValue]);
+		else
+			return std::string("bad building value");
+	}
     std::ostream& operator <<(std::ostream& os) const
     {
-        if (_enumValue < _tableSize)
+        if (_enumValue >= 0 && _enumValue < _tableSize)
             os << std::string(_nameTable[_enumValue]);
         else
             os << "ERROR: _enumValue too big: " << _enumValue;
@@ -309,7 +328,7 @@ public:
 };
 inline std::ostream& operator <<(std::ostream& os, const Building& b)
 {
-    if (b._enumValue < b._tableSize)
+    if (b._enumValue >= 0 && b._enumValue < b._tableSize)
         os << std::string(b._nameTable[b._enumValue]);
     else
         os << "ERROR: _enumValue too big: " << b._enumValue;
