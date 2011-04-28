@@ -157,7 +157,7 @@ void ExampleAIModule::onEnd(bool isWinner)
 	{
 		//log win to file
 	}
-	openingPredictor->quit_game("duknow", 1);
+	openingPredictor->quit_game("FastLegs", 1);
 	delete openingPredictor;
 }
 
@@ -260,11 +260,6 @@ void ExampleAIModule::onNukeDetect(BWAPI::Position target)
 
 void ExampleAIModule::onUnitDiscover(BWAPI::Unit* unit)
 {
-	if (unit->getType().isBuilding())
-	{
-		openingPredictor->instantiate_and_compile(Broodwar->getFrameCount()/24, unit->getType().getName().c_str(), "duknow");
-	}
-
 	if (!Broodwar->isReplay() && Broodwar->getFrameCount()>1)
 		Broodwar->sendText("A %s [%x] has been discovered at (%d,%d)",unit->getType().getName().c_str(),unit,unit->getPosition().x(),unit->getPosition().y());
 }
@@ -295,6 +290,10 @@ void ExampleAIModule::onUnitCreate(BWAPI::Unit* unit)
 			Broodwar->sendText("A %s [%x] has been created at (%d,%d)",unit->getType().getName().c_str(),unit,unit->getPosition().x(),unit->getPosition().y());
 		else
 		{
+			if (unit->getType().isBuilding())
+			{
+				openingPredictor->instantiate_and_compile(Broodwar->getFrameCount()/24, unit->getType().getName().c_str(), "FastLegs");
+			}
 			/*if we are in a replay, then we will print out the build order
 			(just of the buildings, not the units).*/
 			if (unit->getType().isBuilding() && unit->getPlayer()->isNeutral()==false)

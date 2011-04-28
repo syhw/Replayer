@@ -260,9 +260,6 @@ public:
     }
     Building(const char* buildingName)
     {
-		std::string tmpString(buildingName);
-		while (tmpString.find('_') != std::string::npos)
-			tmpString.replace(tmpString.find('_'), 1, 1, ' ');
         if (buildingName[0] == 'P')
         {
             _tableSize = NB_PROTOSS_BUILDINGS;
@@ -294,7 +291,10 @@ public:
                 _enumValue = i;
                 return;
             }
-			if (!strcmp(tmpString.c_str(), _nameTable[i]))
+			std::string tmpString(_nameTable[i]);
+			while (tmpString.find('_') != std::string::npos)
+				tmpString.replace(tmpString.find('_'), 1, 1, ' ');
+			if (!strcmp(buildingName, tmpString.c_str()))
             {
                 _enumValue = i;
                 return;
