@@ -534,6 +534,8 @@ int OpeningPredictor::instantiate_and_compile(int time,
 {
     evidence[observed[building.getEnumValue()]] = 1;
     evidence[Time] = time;
+	for (unsigned int i = 0; i < evidence.size(); ++i)
+		BWAPI::Broodwar->printf(">>> %s", evidence[i]);
 
 #if DEBUG_OUTPUT > 1
     cout << "====== evidence ======" << endl;
